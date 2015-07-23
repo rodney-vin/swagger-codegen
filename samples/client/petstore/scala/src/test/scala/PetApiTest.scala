@@ -1,6 +1,7 @@
-import com.wordnik.petstore.api._
-import com.wordnik.petstore.model._
-
+import io.swagger.client._
+import io.swagger.client.api._
+import io.swagger.client.model._
+ 
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import org.scalatest._
@@ -14,23 +15,13 @@ class PetApiTest extends FlatSpec with Matchers {
   behavior of "PetApi"
   val api = new PetApi
 
-  it should "fetch a pet" in {
-    api.getPetById(1) match {
-      case Some(pet) => {
-        pet should not be (null)
-        pet.id should be(1)
-      }
-      case None => fail("didn't find pet 1")
-    }
-  }
-
-  it should "add a new pet" in {
+  it should "add and fetch a pet" in {
     val pet = Pet(
       1000,
       Category(1, "sold"),
       "dragon",
       (for (i <- (1 to 10)) yield "http://foo.com/photo/" + i).toList,
-      (for (i <- (1 to 5)) yield com.wordnik.petstore.model.Tag(i, "tag-" + i)).toList,
+      (for (i <- (1 to 5)) yield io.swagger.client.model.Tag(i, "tag-" + i)).toList,
       "lost"
     )
 
@@ -55,7 +46,7 @@ class PetApiTest extends FlatSpec with Matchers {
       Category(1, "sold"),
       "programmer",
       (for (i <- (1 to 10)) yield "http://foo.com/photo/" + i).toList,
-      (for (i <- (1 to 5)) yield com.wordnik.petstore.model.Tag(i, "tag-" + i)).toList,
+      (for (i <- (1 to 5)) yield io.swagger.client.model.Tag(i, "tag-" + i)).toList,
       "confused"
     )
 
@@ -68,7 +59,7 @@ class PetApiTest extends FlatSpec with Matchers {
       }
       case None => fail("didn't find pet created")
     }
-    val updatedPet = pet.copy(status="fulfilled")
+    val updatedPet = pet.copy(status = "fulfilled")
     api.updatePet(updatedPet)
     api.getPetById(1000) match {
       case Some(pet) => {
@@ -80,7 +71,7 @@ class PetApiTest extends FlatSpec with Matchers {
   }
 
   it should "find pets by status" in {
-    api.findPetsByStatus("available") match {
+    api.findPetsByStatus(List("available")) match {
       case Some(pets) => {
         pets.foreach(pet => pet.status should be("available"))
       }
@@ -90,11 +81,11 @@ class PetApiTest extends FlatSpec with Matchers {
 
   it should "find pets by tag" in {
     println("finding by tags")
-    api.findPetsByTags("tag1,tag2") match {
+    api.findPetsByTags(List("tag1", "tag2")) match {
       case Some(pets) => {
         pets.foreach(pet => {
           val tags = (for (tag <- pet.tags) yield tag.name).toSet
-          if ((tags & Set("tag1", "tag2")).size == 0) 
+          if ((tags & Set("tag1", "tag2")).size == 0)
             fail("unexpected tags in " + tags)
         })
       }

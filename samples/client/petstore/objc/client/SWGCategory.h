@@ -2,18 +2,14 @@
 #import "SWGObject.h"
 
 
+@protocol SWGCategory
+@end
+  
 @interface SWGCategory : SWGObject
 
-@property(nonatomic) NSNumber* _id;  
 
-@property(nonatomic) NSString* name;  
+@property(nonatomic) NSNumber* _id;
 
-- (id) _id: (NSNumber*) _id
-     name: (NSString*) name;
-
-- (id) initWithValues: (NSDictionary*)dict;
-- (NSDictionary*) asDictionary;
-
+@property(nonatomic) NSString* name;
 
 @end
-
